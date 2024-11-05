@@ -1,23 +1,17 @@
-1. Main control device: Like tablet with software suited for home automation. We can use remote controller too.
-.tablet
-.remote controller
-
-2. Sensors:
+ Sensors:
 .light sensor
 .temperature sensor
 .motion sensor
 .smoke sensor
+.moisture sensor
 
-3. Devices with wifi and software: 
-.light
-.camera
-.switches
-.speaker
-.plugs or outlets
-
-4. Wifi: 
-.wifi rooter
-.ethernet cable
-
-5. Application:
-.mobile app 
+1.	Light control system: If sensors detect a person turn on the light.
+2.	Light control system with person data: If there is not light in the room, so it’s night and if sensors detect person turn on
+    the light. Else trun of the light.
+3.	Fire or smoke detection system: If there is smoke turn on the fire sprinkler.
+4.	Fire detection system for kitchen: If stove is on and sensors detects temperature more than 100 degree turn on the fire 
+    sprinkler. If stove is on and sensors don’t detects temperature more than 100 degree and if smoke detector detects smoke 
+    don’t turn on fire sprinkler.  If stove is off and sensors don’t detects temperature more than 100 degree and if smoke detector detects smoke turn on fire sprinkler.
+5.	Water leak control system: If moisture detector detects water turn off valve.
+6.	Ac control system: If one of the Windows open turn off ac.
+7.	Television usage time control system: Count the television’s running time.

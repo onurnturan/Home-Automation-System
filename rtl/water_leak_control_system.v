@@ -1,26 +1,12 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 07.11.2024 12:16:11
-// Design Name: 
-// Module Name: water_leak_control_system
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
 
 
-module water_leak_control_system(
 
-    );
+module water_leak_control_system(out1,in1);
+
+input in1;//controls moisture in the basement
+output out1;//if there is moisture turn of valve
+
+assign out1=in1;
+
 endmodule

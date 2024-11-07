@@ -4,7 +4,7 @@
 
 module light_control2(out1,in1,in2);
 
-input in1, in2;
+input in1, in2; // girişler
 output out1;
  wire not1;
  

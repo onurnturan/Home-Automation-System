@@ -15,4 +15,4 @@
     If sensors detect smoke or fire turn on ventilation system.
 5.	Water leak control system: If moisture detector detects water turn off valve.
 6.	Ac control system: If one of the Windows open turn off ac.
-7.	Television usage time control system: Count the television’s running time.
+7.	Television usage time control system: Count the television’s running time.(sequential)

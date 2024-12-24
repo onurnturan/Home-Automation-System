@@ -1,0 +1,27 @@
+`timescale 1ns / 1ps
+
+module small_big_garage_doors(btn,clk,sdoor,bdoor);
+input clk,btn;
+output reg sdoor,bdoor;//small and big garage doors
+reg btn_prev;
+initial begin 
+btn_prev<=1'b0;
+sdoor<=1'b0;
+bdoor<=1'b0;
+end
+always @ (posedge clk) begin
+if (btn==1'b1 && btn_prev == 1'b0) begin // at first press small garage door opened
+sdoor<=1'b1;
+bdoor<=1'b0;
+end
+else if (btn==1'b1 && btn_prev == 1'b1) begin // at second press small door closed and big door opened
+sdoor<=1'b0;
+bdoor<=1'b1;
+end
+else if(bdoor==1'b1 && btn==1'b1)begin// at third press both of the garage doors closed
+sdoor<=1'b0;
+bdoor<=1'b0;
+end
+btn_prev<=btn;
+end
+endmodule

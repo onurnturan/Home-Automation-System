@@ -1,0 +1,21 @@
+`timescale 1ns / 1ps
+module three_bit_tv_counter(btn,clk,count);
+input clk,btn;// clk for clock signal and btn for only turning on the tv
+output reg [2:0] count; // 3 bit counter
+
+reg btn_prev; 
+
+    
+initial begin
+count = 3'b000;
+btn_prev = 1'b0;
+end
+
+always @(posedge clk) begin
+
+if(btn == 1'b1 && btn_prev == 1'b0) count <= count+ 1'b1;
+if(count == 3'b111) count <= 3'b000;
+btn_prev <= btn;
+end
+
+endmodule

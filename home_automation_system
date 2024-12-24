@@ -1,9 +1,3 @@
- Sensors:
-.light sensor
-.temperature sensor
-.motion sensor
-.smoke sensor
-.moisture sensor
 
 1.	Light control system: If sensors detect a person turn on the light.
 2.	Light control system with person data: If there is not light in the room, so it’s night and if sensors detect person turn on

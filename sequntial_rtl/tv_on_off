@@ -1,0 +1,22 @@
+`timescale 1ns / 1ps
+
+
+module tv_on_of(btn,clk,out);
+input btn;//button to turn off or turn on tv 
+input clk;//clock
+output reg out;//tv open or closed
+
+reg btn_prev;
+initial begin
+out <= 1'b0; 
+btn_prev <= 1'b0;
+end
+always @(posedge clk)begin
+
+if (btn == 1'b1 && btn_prev == 1'b0) begin
+            out <= ~out; // Toggle TV state
+        end
+        btn_prev <= btn; // Update button last state
+end
+
+endmodule

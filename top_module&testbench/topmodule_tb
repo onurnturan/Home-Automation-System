@@ -1,0 +1,181 @@
+`timescale 1ns / 1ps
+
+module top_module_tb;
+
+    
+    reg window_detection1;
+    reg window_detection2;
+    reg window_detection3;
+    reg fire_detector;
+    reg smoke_detector;
+    reg stove_state;
+    reg person_detection;
+    reg light_sensor;
+    reg moisture_sensor;
+    reg clk;
+    reg tv_btn;
+    reg sink_stat;
+    reg weather_stat;
+    reg garage_btn;
+
+
+    wire ac_control;
+    wire fire_sprinkler1;
+    wire fire_sprinkler2;
+    wire ventilation_system;
+    wire light_out1;
+    wire light_out2;
+    wire valve;
+    wire [2:0] tv_count;
+    wire hot_water;
+    wire cold_water;
+    wire small_door;
+    wire big_door;
+    wire tv_state;
+
+    // Instantiation
+    top_module uut (
+        .window_detection1(window_detection1),
+        .window_detection2(window_detection2),
+        .window_detection3(window_detection3),
+        .ac_control(ac_control),
+        .fire_detector(fire_detector),
+        .smoke_detector(smoke_detector),
+        .fire_sprinkler1(fire_sprinkler1),
+        .fire_sprinkler2(fire_sprinkler2),
+        .stove_state(stove_state),
+        .ventilation_system(ventilation_system),
+        .person_detection(person_detection),
+        .light_sensor(light_sensor),
+        .light_out1(light_out1),
+        .light_out2(light_out2),
+        .moisture_sensor(moisture_sensor),
+        .valve(valve),
+        .clk(clk),
+        .tv_btn(tv_btn),
+        .tv_count(tv_count),
+        .sink_stat(sink_stat),
+        .weather_stat(weather_stat),
+        .hot_water(hot_water),
+        .cold_water(cold_water),
+        .garage_btn(garage_btn),
+        .small_door(small_door),
+        .big_door(big_door),
+        .tv_state(tv_state)
+    );
+
+    // Clock signal
+    initial clk = 0;
+    always #5 clk = ~clk; // 10 ns clock period
+
+   
+    initial begin
+        // Initialize Inputs
+        window_detection1 = 0;
+        window_detection2 = 0;
+        window_detection3 = 0;
+        fire_detector = 0;
+        smoke_detector = 0;
+        stove_state = 0;
+        person_detection = 0;
+        light_sensor = 0;
+        moisture_sensor = 0;
+        tv_btn = 0;
+        sink_stat = 0;
+        weather_stat = 0;
+        garage_btn = 0;
+
+        //  AC Control System
+        #10;
+        window_detection1 = 1; // One window open
+        #10;
+        window_detection1 = 0;
+        window_detection2 = 1; // Another window open
+        #10;
+        window_detection2 = 0; // All windows closed
+        #10;
+        window_detection1 = 1;//All windows open
+        window_detection2 = 1;
+        window_detection1 = 1;
+        
+
+        //  Fire and Smoke Detection
+        fire_detector = 1;
+        #10;
+        fire_detector = 0;
+        smoke_detector = 1;
+        #10;
+        smoke_detector = 0;
+
+        //  Fire and Smoke Detection at Kitchen 
+        stove_state = 1;
+        smoke_detector = 1;
+        #10;
+        stove_state = 0;
+        smoke_detector = 0;
+        #10;
+        stove_state = 0;
+        fire_detector = 1;
+
+        //  Light Control
+        person_detection = 1;
+        #10;
+        light_sensor = 1; // Daytime
+        #10;
+        person_detection = 0;
+        light_sensor = 0;
+
+        //  Water Leak Control
+        moisture_sensor = 1;
+        #10;
+        moisture_sensor = 0;
+
+        //  TV Counter
+        tv_btn = 1;
+        #10;
+        tv_btn = 0;
+        #10;
+        tv_btn = 1;
+        #10;
+        tv_btn = 0;
+
+        //  Hot/Cold Water Control
+        sink_stat = 1;
+        weather_stat = 1; // Hot weather
+        #10;
+        sink_stat = 0;
+        #10;
+        sink_stat = 0;
+        #10;
+        sink_stat = 0;
+        #10;
+        sink_stat = 0;
+        #10;
+        sink_stat = 1;
+        weather_stat = 0;// Cold weather
+
+        //  Garage Door Control
+        garage_btn = 1;
+        #10;
+        garage_btn = 1;
+        #10;
+        garage_btn = 1;
+        #10;
+        garage_btn = 1;
+        #10;
+        garage_btn = 0;
+        #10;
+        garage_btn = 1;
+
+        //  TV On/Off Control
+        tv_btn = 1;
+        #10;
+        tv_btn = 0;
+
+        
+        #100;
+        $finish;
+    end
+
+endmodule
+

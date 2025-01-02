@@ -1,0 +1,214 @@
+`timescale 1ns / 1ps
+
+
+module top_module( 
+    window_detection1, window_detection2, window_detection3, ac_control,
+    fire_detector, smoke_detector, fire_sprinkler1, fire_sprinkler2,
+    stove_state, ventilation_system,
+    person_detection, light_sensor, light_out1, light_out2,
+    moisture_sensor, valve,
+    clk, tv_btn, tv_count,
+    sink_stat, weather_stat, hot_water, cold_water,
+    garage_btn, small_door, big_door,
+    tv_state
+);
+    input window_detection1, window_detection2, window_detection3;
+    output wire ac_control; // Changed to wire
+    input fire_detector, smoke_detector;
+    output wire fire_sprinkler1, fire_sprinkler2; // Changed to wire
+    input stove_state;
+    output wire ventilation_system; // Changed to wire
+    input person_detection, light_sensor;
+    output wire light_out1, light_out2; // Changed to wire
+    input moisture_sensor;
+    output wire valve; // Changed to wire
+    input clk, tv_btn;
+    output wire [2:0] tv_count; // Changed to wire
+    input sink_stat, weather_stat;
+    output wire hot_water, cold_water; // Changed to wire
+    input garage_btn;
+    output wire small_door, big_door; // Changed to wire
+    output wire tv_state; // Changed to wire
+
+    // Instantiate submodules
+    behavioral_ac_control_system uut1(.in1(window_detection1), .in2(window_detection2), .in3(window_detection3), .out1(ac_control));
+    behavioral_fire_or_smoke_detection uut2(.out1(fire_sprinkler1), .in1(fire_detector), .in2(smoke_detector));
+    behavioral_fire_or_smoke_detection_for_kitchen uut3(.out1(fire_sprinkler2), .out2(ventilation_system), .in1(stove_state), .in2(fire_detector), .in3(smoke_detector));
+    behavioral_light_control1 uut4(.out1(light_out1), .in1(person_detection));
+    behavioral_light_control2 uut5(.out1(light_out2), .in1(light_sensor), .in2(person_detection));
+    behavioral_water_leak_control_system uut6(.out1(valve), .in1(moisture_sensor));
+    three_bit_tv_counter uut7(.btn(tv_btn), .clk(clk), .count(tv_count));
+    hot_cold_water_control_system uut8(.clk(clk), .btnA(sink_stat), .B(weather_stat), .hot(hot_water), .cold(cold_water));
+    small_big_garage_doors uut9(.btn(garage_btn), .clk(clk), .sdoor(small_door), .bdoor(big_door));
+    tv_on_of uut10(.btn(tv_btn), .clk(clk), .out(tv_state));
+endmodule
+
+
+//.............................................................................
+module behavioral_ac_control_system(out1,in1,in2,in3);
+input in1,in2,in3;//1st,2nd,3rd window
+output reg out1;
+ 
+always @(*)begin
+out1=~in1&~in2&~in3;
+//if one of the window is open close ac.
+//if none of the window is open open ac.
+end
+endmodule
+
+//.............................................................................
+
+module behavioral_fire_or_smoke_detection(out1,in1,in2);
+input in1,in2;//in1=fire detector ,in2=smoke detector
+output reg out1;//fire sprinkler on/of
+
+always @(*) begin
+out1=in1|in2;
+end
+endmodule
+//.............................................................................
+
+module behavioral_fire_or_smoke_detection_for_kitchen(out1,out2,in1,in2,in3);
+input in1,in2,in3;//in1=stove on or off, in2=fire detector, in3=smoke detector
+output reg out1,out2;//out1=fire sprinkler on or of, out2=ventilation system
+
+always @(*) begin
+out1= (~in1&in3)|in2;
+out2= in2|in3;
+end
+endmodule
+//in1   in2  in3   out1      out2
+//stove fire smoke sprinkler ventilation
+//1     1    1     1         1
+//1     0    0     0         0
+//0     1    0     1         1
+//0     0    1     1         1
+//1     1    0     1         1
+//0     1    1     1         1
+//1     0    1     0         1
+//0     0    0     0         0
+
+//.............................................................................
+
+module behavioral_light_control1(out1,in1);
+input in1;//if there is a person in the room input = 1
+output reg out1;//if out1 is 1 turn on the light
+
+always @(*) begin
+out1=in1;
+end
+endmodule
+
+//.............................................................................
+
+
+module behavioral_light_control2(out1,in1,in2);
+input in1, in2; // in1 is for light(day or night) input.in2 is for person.If there is a person in the room in2 =1
+output reg out1;
+
+always @(*) begin
+out1=~in1&in2;
+end
+//if there is no light and a person in the room than open the light
+//if there is no light and none person in the room than don't open the light
+//if there is light don't open the light
+endmodule
+
+//.............................................................................
+
+module behavioral_water_leak_control_system(out1,in1);
+input in1;//controls moisture in the basement
+output reg out1;//if there is moisture turn of valve
+
+always @(*) begin
+out1=in1;
+end
+endmodule
+
+//.............................................................................
+
+module three_bit_tv_counter(btn,clk,count);
+input clk,btn;// clk for clock signal and btn for only turning on the tv
+output reg [2:0] count; // 3 bit counter
+reg btn_prev; 
+initial begin
+count = 3'b000;
+btn_prev = 1'b0;
+end
+
+always @(posedge clk) begin
+if(btn == 1'b1 && btn_prev == 1'b0) count <= count+ 1'b1;
+if(count == 3'b111) count <= 3'b000;
+btn_prev <= btn;
+end
+endmodule
+
+//.............................................................................
+
+module hot_cold_water_control_system(clk,btnA,B,hot,cold);
+input clk;
+input btnA;// button for turning on or off the sink
+input B;//input for the weather status 1 for hot water 0 for cold water
+output reg hot;//if 1 hot water flow
+output reg cold;//if 1 cold water flow
+always @(posedge clk)begin
+case({btnA,B})
+    2'b00 : begin hot<=1'b0; cold<=1'b0; end//no flow
+    2'b01 : begin hot<=1'b0; cold<=1'b0; end//no flow
+    2'b10 : begin hot<=1'b0; cold<=1'b1; end//cold water flow
+    2'b11 : begin hot<=1'b1; cold<=1'b0; end//hot water flow
+ endcase
+end
+endmodule
+
+//.............................................................................
+
+
+module small_big_garage_doors(btn,clk,sdoor,bdoor);
+input clk,btn;
+output reg sdoor,bdoor;//small and big garage doors
+reg btn_prev;
+initial begin 
+btn_prev<=1'b0;
+sdoor<=1'b0;
+bdoor<=1'b0;
+end
+always @ (posedge clk) begin
+if (btn==1'b1 && btn_prev == 1'b0) begin // at first press small garage door opened
+sdoor<=1'b1;
+bdoor<=1'b0;
+end
+else if (btn==1'b1 && btn_prev == 1'b1) begin // at second press small door closed and big door opened
+sdoor<=1'b0;
+bdoor<=1'b1;
+end
+else if(bdoor==1'b1 && btn==1'b1)begin// at third press both of the garage doors closed
+sdoor<=1'b0;
+bdoor<=1'b0;
+end
+btn_prev<=btn;
+end
+endmodule
+
+//.............................................................................
+
+
+module tv_on_of(btn,clk,out);
+input btn;//button to turn off or turn on tv 
+input clk;//clock
+output reg out;//tv open or closed
+
+reg btn_prev;
+initial begin
+out <= 1'b0; 
+btn_prev <= 1'b0;
+end
+always @(posedge clk)begin
+
+if (btn == 1'b1 && btn_prev == 1'b0) begin
+            out <= ~out; // Toggle TV state
+        end
+        btn_prev <= btn; // Update button last state
+end
+endmodule
+
